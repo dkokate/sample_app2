@@ -30,7 +30,7 @@ describe "User pages" do
       end
     end
     
-    describe "with valid info" do
+    describe "with valid information" do
       before do
         fill_in "Name",         with: "Example User"
         fill_in "Email",        with: "user@example.com"
@@ -40,7 +40,22 @@ describe "User pages" do
       it "should create a user and change user count by 1" do
         expect {click_button submit}.to change(User, :count)
       end
-    end
       
+      describe "after saving the user" do
+        before {click_button submit}
+        let(:user) { User.find_by(email: 'user@example.com')}
+        
+        it {should have_link('Sign out')}
+        it {should have_title(user.name)}
+        it {should have_selector('div.alert.alert-success', text: 'Welcome')} 
+        
+        # The following test is redundant as it is tested in authentication_pages as well
+        describe "followed by signout" do
+          before {click_link('Sign out')}
+          it {should have_link('Sign in')}
+        end
+  
+      end
+    end      
   end
 end
